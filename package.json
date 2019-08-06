@@ -10,7 +10,7 @@
     "test": "npm run test:style && npm run test:service && npm run test:load",
     "test:style": "eslint .",
     "test:service": "nyc mocha tests",
-    "test:load": "forever --uid \"bgserver\" start index.js && artillery run loadtest.yml && forever stop \"bgserver\"",
+    "test:load": "forever start index.js && artillery run loadtest.yml && forever stopall",
     "start": "node index.js"
   },
   "keywords": [
