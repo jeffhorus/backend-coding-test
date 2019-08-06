@@ -1,0 +1,26 @@
+config:
+  target: 'http://localhost:8010'
+  phases:
+    - duration: 30
+      arrivalRate: 110
+scenarios:
+  - name: 'Create ride'
+    flow:
+      - post:
+          url: "/rides"
+          json:
+            start_lat: 10
+            end_lat: 11
+            start_long: 10
+            end_long: 11
+            rider_name: "Jeffrey"
+            driver_name: "Tofu"
+            driver_vehicle: "Buroq"
+  - name: 'Get rides history'
+    flow:
+      - get:
+          url: "/rides"
+  - name: 'Get one ride detail'
+    flow:
+      - get:
+          url: "/rides/1"
