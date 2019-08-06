@@ -1,5 +1,6 @@
 'use strict'
 
+const isFinite = require('underscore').isFinite
 const express = require('express')
 const app = express()
 
@@ -92,22 +93,20 @@ module.exports = (db) => {
   })
 
   app.get('/rides', (req, res, next) => {
-    let page, limit
     let command = 'SELECT * FROM Rides'
+    const prepared = []
 
-    if (req.query.limit) {
-      limit = req.query.limit
+    if (isFinite(req.query.limit)) {
+      prepared.push(req.query.limit)
+      command += ` LIMIT ?`
 
-      command += ` LIMIT ${limit}`
-
-      if (req.query.page) {
-        page = req.query.page
-
-        command += ` OFFSET ${(page - 1) * limit}`
+      if (isFinite(req.query.page)) {
+        prepared.push((req.query.page - 1) * req.query.limit)
+        command += ` OFFSET ?`
       }
     }
 
-    db.all(command, function (err, rows) {
+    db.all(command, prepared, function (err, rows) {
       if (err) {
         console.log(err)
         return next(new ApiError({
@@ -129,7 +128,7 @@ module.exports = (db) => {
   })
 
   app.get('/rides/:id', (req, res, next) => {
-    db.all(`SELECT * FROM Rides WHERE rideID='${req.params.id}'`, function (err, rows) {
+    db.all('SELECT * FROM Rides WHERE rideID = ?', [req.params.id], function (err, rows) {
       if (err) {
         return next(new ApiError({
           error_code: 'SERVER_ERROR',

@@ -406,5 +406,19 @@ describe('API tests', () => {
           })
       })
     })
+
+    describe('provided id with sql injection attact', () => {
+      it('should throw RIDES_NOT_FOUND_ERROR', (done) => {
+        const rideID = '1\''
+
+        request(app)
+          .get(`/rides/${rideID}`)
+          .expect('Content-Type', /json/)
+          .expect(200, {
+            error_code: 'RIDES_NOT_FOUND_ERROR',
+            message: 'Could not find any rides'
+          }, done)
+      })
+    })
   })
 })
