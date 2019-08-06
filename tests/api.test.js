@@ -207,6 +207,65 @@ describe('API tests', () => {
     })
 
     describe('ride found', () => {
+      beforeEach(() => {
+        const values = [
+          1,
+          10,
+          10,
+          11,
+          11,
+          'Jeffrey',
+          'Tofu',
+          'Buroq'
+        ]
+
+        db.run('INSERT INTO Rides(rideID, startLat, startLong, endLat, endLong, riderName, driverName, driverVehicle) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', values, function (err) {
+          if (err) {
+            throw err
+          }
+        })
+      })
+
+      it('should give success response', (done) => {
+        request(app)
+          .get(`/rides`)
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((err, res) => {
+            if (err) return done(err)
+
+            expect(res.body).to.be.an('array')
+            expect(res.body).to.have.length(1)
+            expect(res.body[0].rideID).to.be.equal(1)
+            expect(res.body[0].startLat).to.be.equal(10)
+            expect(res.body[0].startLong).to.be.equal(10)
+            expect(res.body[0].endLat).to.be.equal(11)
+            expect(res.body[0].endLong).to.be.equal(11)
+            expect(res.body[0].riderName).to.be.equal('Jeffrey')
+            expect(res.body[0].driverName).to.be.equal('Tofu')
+            expect(res.body[0].driverVehicle).to.be.equal('Buroq')
+            return done()
+          })
+      })
+    })
+  })
+  
+  describe('GET /rides/:id', () => {
+    describe('ride not found', () => {
+      it('should throw RIDES_NOT_FOUND_ERROR', (done) => {
+        const rideID = 'nonexistentid'
+
+        request(app)
+          .get(`/rides/${rideID}`)
+          .expect('Content-Type', /json/)
+          .expect(200, {
+            error_code: 'RIDES_NOT_FOUND_ERROR',
+            message: 'Could not find any rides'
+          }, done)
+      })
+    })
+
+    describe('ride found', () => {
       let rideID = 100
 
       beforeEach(() => {
