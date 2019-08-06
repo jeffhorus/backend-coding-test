@@ -7,7 +7,9 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "mocha tests",
+    "test": "npm run test:style && npm run test:service",
+    "test:style": "eslint .",
+    "test:service": "nyc mocha tests",
     "start": "node index.js"
   },
   "keywords": [
@@ -17,11 +19,20 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
+    "expect.js": "^0.3.1",
     "express": "^4.16.4",
     "sqlite3": "^4.0.6"
   },
   "devDependencies": {
+    "eslint": "^6.1.0",
+    "eslint-config-airbnb-base": "^13.2.0",
+    "eslint-config-standard": "^13.0.1",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0",
     "mocha": "^6.1.4",
+    "nyc": "^14.1.1",
     "supertest": "^4.0.2"
   }
 }
