@@ -27,6 +27,10 @@ describe('API tests', () => {
     });
   })
 
+  after(() => {
+    db.close()
+  })
+
   describe('GET /health', () => {
     it('should return health', (done) => {
       request(app)
