@@ -92,8 +92,24 @@ module.exports = (db) => {
   })
 
   app.get('/rides', (req, res, next) => {
-    db.all('SELECT * FROM Rides', function (err, rows) {
+    let page, limit
+    let command = 'SELECT * FROM Rides'
+
+    if (req.query.limit) {
+      limit = req.query.limit
+
+      command += ` LIMIT ${limit}`
+
+      if (req.query.page) {
+        page = req.query.page
+
+        command += ` OFFSET ${(page - 1) * limit}`
+      }
+    }
+
+    db.all(command, function (err, rows) {
       if (err) {
+        console.log(err)
         return next(new ApiError({
           error_code: 'SERVER_ERROR',
           message: 'Unknown error'

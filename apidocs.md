@@ -74,6 +74,11 @@ You can get ride history with this API
 ### URL
 `GET /rides`
 
+### Query Parameters
+
+- limit: `int` number of records you want to fetch
+- page: `int` the page number you want to fetch
+
 ### Response Body
 
 **Specification**
@@ -91,6 +96,8 @@ JSON array containing JSON objects
 - driverVehicle: `string` the driver's vehicle
 
 **Example**
+
+`GET /rides`
 ```
 [
     {
@@ -125,6 +132,23 @@ JSON array containing JSON objects
         "driverName": "Tofu",
         "driverVehicle": "Buroq",
         "created": "2019-08-06 12:38:00"
+    }
+]
+```
+
+`GET /rides?limit=1&page=2`
+```
+[
+    {
+        "rideID": 2,
+        "startLat": 10,
+        "startLong": 10,
+        "endLat": 11,
+        "endLong": 11,
+        "riderName": "Jeffrey",
+        "driverName": "Tofu",
+        "driverVehicle": "Buroq",
+        "created": "2019-08-06 12:37:59"
     }
 ]
 ```

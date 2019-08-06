@@ -22,6 +22,7 @@
     "expect.js": "^0.3.1",
     "express": "^4.16.4",
     "sqlite3": "^4.0.6",
+    "underscore": "^1.9.1",
     "winston": "^3.2.1"
   },
   "devDependencies": {

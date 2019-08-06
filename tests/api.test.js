@@ -206,9 +206,9 @@ describe('API tests', () => {
       })
     })
 
-    describe('ride found', () => {
+    describe('get without pagination', () => {
       beforeEach(() => {
-        const values = [
+        const record1 = [
           1,
           10,
           10,
@@ -216,17 +216,25 @@ describe('API tests', () => {
           11,
           'Jeffrey',
           'Tofu',
-          'Buroq'
+          'Buroq',
+          2,
+          10,
+          10,
+          11,
+          11,
+          'Lingga',
+          'Dubu',
+          'Pegasus'
         ]
 
-        db.run('INSERT INTO Rides(rideID, startLat, startLong, endLat, endLong, riderName, driverName, driverVehicle) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', values, function (err) {
+        db.run('INSERT INTO Rides(rideID, startLat, startLong, endLat, endLong, riderName, driverName, driverVehicle) VALUES (?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?)', record1, function (err) {
           if (err) {
             throw err
           }
         })
       })
 
-      it('should give success response', (done) => {
+      it('should give all the records', (done) => {
         request(app)
           .get(`/rides`)
           .expect('Content-Type', /json/)
@@ -235,15 +243,104 @@ describe('API tests', () => {
             if (err) return done(err)
 
             expect(res.body).to.be.an('array')
+            expect(res.body).to.have.length(2)
+            expect(res.body[0].rideID).to.be.equal(1)
+            expect(res.body[1].rideID).to.be.equal(2)
+            return done()
+          })
+      })
+    })
+
+    describe('get with limit and page pagination', () => {
+      beforeEach(() => {
+        const record1 = [
+          1,
+          10,
+          10,
+          11,
+          11,
+          'Jeffrey',
+          'Tofu',
+          'Buroq',
+          2,
+          10,
+          10,
+          11,
+          11,
+          'Lingga',
+          'Dubu',
+          'Pegasus'
+        ]
+
+        db.run('INSERT INTO Rides(rideID, startLat, startLong, endLat, endLong, riderName, driverName, driverVehicle) VALUES (?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?)', record1, function (err) {
+          if (err) {
+            throw err
+          }
+        })
+      })
+
+      it('should give only the records according to pagination', (done) => {
+        request(app)
+          .get(`/rides`)
+          .query({
+            limit: 1,
+            page: 2
+          })
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((err, res) => {
+            if (err) return done(err)
+
+            expect(res.body).to.be.an('array')
+            expect(res.body).to.have.length(1)
+            expect(res.body[0].rideID).to.be.equal(2)
+            return done()
+          })
+      })
+    })
+
+    describe('get with limit pagination only', () => {
+      beforeEach(() => {
+        const record1 = [
+          1,
+          10,
+          10,
+          11,
+          11,
+          'Jeffrey',
+          'Tofu',
+          'Buroq',
+          2,
+          10,
+          10,
+          11,
+          11,
+          'Lingga',
+          'Dubu',
+          'Pegasus'
+        ]
+
+        db.run('INSERT INTO Rides(rideID, startLat, startLong, endLat, endLong, riderName, driverName, driverVehicle) VALUES (?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?)', record1, function (err) {
+          if (err) {
+            throw err
+          }
+        })
+      })
+
+      it('should give only the records according to pagination', (done) => {
+        request(app)
+          .get(`/rides`)
+          .query({
+            limit: 1
+          })
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .end((err, res) => {
+            if (err) return done(err)
+
+            expect(res.body).to.be.an('array')
             expect(res.body).to.have.length(1)
             expect(res.body[0].rideID).to.be.equal(1)
-            expect(res.body[0].startLat).to.be.equal(10)
-            expect(res.body[0].startLong).to.be.equal(10)
-            expect(res.body[0].endLat).to.be.equal(11)
-            expect(res.body[0].endLong).to.be.equal(11)
-            expect(res.body[0].riderName).to.be.equal('Jeffrey')
-            expect(res.body[0].driverName).to.be.equal('Tofu')
-            expect(res.body[0].driverVehicle).to.be.equal('Buroq')
             return done()
           })
       })
